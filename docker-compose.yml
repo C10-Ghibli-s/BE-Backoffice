@@ -2,19 +2,19 @@ services:
   mysql:
     image: mysql:5
     environment:
-      - MYSQL_DATABASE=my_db
-      - MYSQL_ROOT_PASSWORD=C10searchengine
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     ports:
-      - '3306:3306'
+      - '${DB_PORT}:${DB_PORT}'
     volumes:
       - ./mysql_data:/var/lib/mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     environment:
-      - MYSQL_ROOT_PASSWORD=C10searchengine
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - PMA_HOST=mysql
     ports:
-      - '8080:80'
+      - '${PHPMA_PORT}'
     depends_on:
       - mysql

@@ -1,9 +1,10 @@
 import { Server } from '@hapi/hapi';
-import { routes } from './routes';
+import { routes } from './app.routes';
+import * as config from './Config/default';
 
 export const init = async () => {
   const server = new Server({
-    port: 3000,
+    port: config.port||3000,
     host: 'localhost',
   });
 
@@ -17,3 +18,4 @@ process.on('unhandledRejection', (err) => {
   console.log(err);
   process.exit(1);
 });
+
