@@ -1,17 +1,31 @@
+import { ApolloServer, ApolloServerPluginStopHapiServer} from 'apollo-server-hapi';
 import { Server } from '@hapi/hapi';
 import { routes } from './app.routes';
+import { typeDefs } from './GraphQL/typeDefs';
+import { resolvers } from './GraphQL/resolvers';
 import * as config from './Config/default';
 
-export const init = async () => {
-  const server = new Server({
+export async function init () {
+
+  const app = new Server({
     port: config.port||3000,
     host: 'localhost',
+    routes: {
+      cors: true,
+    }
   });
-
-  routes(server);
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    csrfPrevention: true,
+    plugins: [ApolloServerPluginStopHapiServer({hapiServer: app})],
+  });
+  routes(app);
 
   await server.start();
-  console.log('Server running on %s', server.info.uri);
+  await server.applyMiddleware({ app });
+  await app.start();
+  console.log('Server running on %s', app.info.uri);
 };
 
 process.on('unhandledRejection', (err) => {

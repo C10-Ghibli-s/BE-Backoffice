@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  @@map("users")
+
+  id                Int         @id @default(autoincrement())
+  profilePicture   String?      @map("profile_picture")
+  password          String
+  interaction    Interactions[]
+  role              Roles       @relation(fields: [roleId], references: [id])
+  roleId            Int
+  joinedAt          DateTime    @default(now()) @map("joined_at")
+  updatedAt         DateTime?   @updatedAt @map("updated_at")
+  status            Status      @default(ACTIVE)
+  nickname          String      @unique
+}
+
+model Roles {
+  @@map("roles")
+
+  id                Int         @id @default(autoincrement())
+  name Role                     @default(USER)
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime?    @updatedAt @map("updated_at")
+  status           Status       @default(ACTIVE)
+  users            Users[]
+}
+
+model Interactions {
+  @@map("interactions")
+
+  id Int @id @default(autoincrement())
+  scoreByEmoji String? @map("score_by_emoji")
+  scoreByStars Decimal? @map("score_by_stars")
+  seenMark  Boolean @default(false) @map("seen_mark")
+  user Users @relation(fields: [userId], references: [id])
+  userId Int
+  movie Movies @relation(fields: [movieId], references: [id])
+  movieId Int
+}
+
+model Movies {
+  @@map("movies")
+
+  id Int @id @default(autoincrement())
+  filmDescription String @db.Text @map("film_description")
+  movieBanner String @map("movie_banner")
+  audienceScore Decimal @default(0.0)
+  releaseDate String @map("release_date")
+  userName String @map("user_name")
+  linkWiki String @map("link_wiki")
+  duration Int
+  createdAt DateTime @map("created_at") @default(now())
+  updatedAt DateTime? @map("updated_at") @updatedAt
+  status Status @default(ACTIVE)
+  interactions Interactions[]
+  title Titles?
+  directors Directors[]
+  musicians Musicians[]
+  writers Writers[]
+}
+
+model Titles {
+  @@map("titles")
+
+  id Int @id @default(autoincrement())
+  movie Movies @relation(fields: [movieId], references: [id])
+  movieId Int
+  title String @unique
+  originalTitle String @unique @map("original_title")
+  romajiTitle String? @unique @map("romaji_title")
+}
+
+model Directors {
+  @@map("directors")
+
+  id Int @id @default(autoincrement())
+  name String @unique
+  movies Movies[]
+}
+
+model Musicians {
+  @@map("musicians")
+
+  id Int @id @default(autoincrement())
+  name String @unique
+  movies Movies[]
+}
+
+model Writers {
+  @@map("writers")
+
+  id Int @id @default(autoincrement())
+  name String @unique
+  movies Movies[]
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+enum Status {
+  ACTIVE
+  SUSPENDED
+  BANED
+}
