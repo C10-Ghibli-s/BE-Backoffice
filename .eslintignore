@@ -1,0 +1,5 @@
+# Ignore the compile file and Node_modules files
+/dist
+/node_modules
+# Ignore the DB files
+/mysql_data/**

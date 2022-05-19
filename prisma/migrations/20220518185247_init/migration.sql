@@ -3,10 +3,10 @@ CREATE TABLE `users` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `profile_picture` VARCHAR(191) NULL,
     `password` VARCHAR(191) NOT NULL,
-    `roleId` INTEGER NOT NULL,
+    `role_id` INTEGER NOT NULL,
     `joined_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NULL,
-    `status` ENUM('ACTIVE', 'SUSPENDED', 'BANED') NOT NULL DEFAULT 'ACTIVE',
+    `status` ENUM('ACTIVE', 'SUSPENDED', 'BANNED') NOT NULL DEFAULT 'ACTIVE',
     `nickname` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `users_nickname_key`(`nickname`),
@@ -19,7 +19,7 @@ CREATE TABLE `roles` (
     `name` ENUM('USER', 'ADMIN', 'SUPERADMIN') NOT NULL DEFAULT 'USER',
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NULL,
-    `status` ENUM('ACTIVE', 'SUSPENDED', 'BANED') NOT NULL DEFAULT 'ACTIVE',
+    `status` ENUM('ACTIVE', 'SUSPENDED', 'BANNED') NOT NULL DEFAULT 'ACTIVE',
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -30,8 +30,8 @@ CREATE TABLE `interactions` (
     `score_by_emoji` VARCHAR(191) NULL,
     `score_by_stars` DECIMAL(65, 30) NULL,
     `seen_mark` BOOLEAN NOT NULL DEFAULT false,
-    `userId` INTEGER NOT NULL,
-    `movieId` INTEGER NOT NULL,
+    `user_id` INTEGER NOT NULL,
+    `movie_id` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -41,14 +41,14 @@ CREATE TABLE `movies` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `film_description` TEXT NOT NULL,
     `movie_banner` VARCHAR(191) NOT NULL,
-    `audienceScore` DECIMAL(65, 30) NOT NULL DEFAULT 0.0,
+    `audience_score` DECIMAL(65, 30) NOT NULL DEFAULT 0.0,
     `release_date` VARCHAR(191) NOT NULL,
     `user_name` VARCHAR(191) NOT NULL,
     `link_wiki` VARCHAR(191) NOT NULL,
     `duration` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NULL,
-    `status` ENUM('ACTIVE', 'SUSPENDED', 'BANED') NOT NULL DEFAULT 'ACTIVE',
+    `status` ENUM('ACTIVE', 'SUSPENDED', 'BANNED') NOT NULL DEFAULT 'ACTIVE',
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -56,7 +56,7 @@ CREATE TABLE `movies` (
 -- CreateTable
 CREATE TABLE `titles` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `movieId` INTEGER NOT NULL,
+    `movie_id` INTEGER NOT NULL,
     `title` VARCHAR(191) NOT NULL,
     `original_title` VARCHAR(191) NOT NULL,
     `romaji_title` VARCHAR(191) NULL,
@@ -64,7 +64,7 @@ CREATE TABLE `titles` (
     UNIQUE INDEX `titles_title_key`(`title`),
     UNIQUE INDEX `titles_original_title_key`(`original_title`),
     UNIQUE INDEX `titles_romaji_title_key`(`romaji_title`),
-    UNIQUE INDEX `titles_movieId_key`(`movieId`),
+    UNIQUE INDEX `titles_movie_id_key`(`movie_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -123,16 +123,16 @@ CREATE TABLE `_DirectorsToMovies` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `users` ADD CONSTRAINT `users_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `users` ADD CONSTRAINT `users_role_id_fkey` FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `interactions` ADD CONSTRAINT `interactions_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `interactions` ADD CONSTRAINT `interactions_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `interactions` ADD CONSTRAINT `interactions_movieId_fkey` FOREIGN KEY (`movieId`) REFERENCES `movies`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `interactions` ADD CONSTRAINT `interactions_movie_id_fkey` FOREIGN KEY (`movie_id`) REFERENCES `movies`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `titles` ADD CONSTRAINT `titles_movieId_fkey` FOREIGN KEY (`movieId`) REFERENCES `movies`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `titles` ADD CONSTRAINT `titles_movie_id_fkey` FOREIGN KEY (`movie_id`) REFERENCES `movies`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_MoviesToMusicians` ADD CONSTRAINT `_MoviesToMusicians_A_fkey` FOREIGN KEY (`A`) REFERENCES `movies`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

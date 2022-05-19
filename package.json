@@ -20,7 +20,6 @@
   "dependencies": {
     "@hapi/hapi": "^20.2.2",
     "@prisma/client": "^3.14.0",
-    "@types/dotenv": "^8.2.0",
     "apollo-server-hapi": "^3.7.0",
     "boom": "^7.3.0",
     "config": "^3.3.7",
