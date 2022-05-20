@@ -27,6 +27,7 @@ export const userTypeDefs = gql`
     password: String!
     role: Roles
     status: Status
+    interactions: [Interactions]
   }
 
 

@@ -33,5 +33,5 @@ export async function deleteRole(
   await context.orm.roles.delete({
     where: { id: parseInt(arg.id, 10) },
   });
-  return `The Role with ${arg.id} was deleted`;
+  return `The Role with ${arg.id} Id was deleted`;
 }
