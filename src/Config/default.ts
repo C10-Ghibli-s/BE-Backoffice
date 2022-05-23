@@ -10,5 +10,9 @@ if (process.env.NODE_ENV === 'prod') {
 }
 
 dotenv.config({ path: path });
-export const port = process.env.PORT;
-export const environment = process.env.ENVIRONMENT;
+
+
+export default {
+  port: process.env.PORT,
+  environment: process.env.ENVIRONMENT,
+};
