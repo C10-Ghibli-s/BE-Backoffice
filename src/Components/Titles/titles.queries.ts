@@ -9,9 +9,7 @@ export function showAllTitles(
   arg: unknown,
   context: ResolverContext
 ): Promise<Titles[]> {
-  return context.orm.titles.findMany({
-    include: { movie: true },
-  });
+  return context.orm.titles.findMany();
 }
 export function getATitle(
   parent: unknown,

@@ -9,12 +9,7 @@ export function showAllInteractions(
   arg: unknown,
   context: ResolverContext
 ): Promise<Interactions[]> {
-  return context.orm.interactions.findMany({
-    include: {
-      user: true,
-      movie: true,
-    },
-  });
+  return context.orm.interactions.findMany();
 }
 
 export function getAInteraction(

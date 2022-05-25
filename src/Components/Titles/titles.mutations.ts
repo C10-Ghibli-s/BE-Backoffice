@@ -18,16 +18,18 @@ export function createTitle(
   });
 }
 
-/* export function updateTitle(
+export function updateTitle(
   parent: unknown,
-  arg: { id: string; data: { data: Pick<Titles, 'title' | 'originalTitle'> } },
+  arg: { id: string; data: Titles; },
   context: ResolverContext
 ): Promise<Titles> {
+  console.log(arg.data);
+
   return context.orm.titles.update({
     where: { id: parseInt(arg.id, 10) },
     data: arg.data,
   });
-} */
+}
 
 export const resolver: Record<
   keyof (Titles & { movie: Movies }),

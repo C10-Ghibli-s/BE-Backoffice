@@ -41,15 +41,23 @@ export function updateUser(
   parent: unknown,
   arg: {
     id: string;
-    data: {
-      data: Pick<Users, 'nickname' | 'password' | 'profilePicture' | 'status'>;
-    };
+    data: Users & Roles;
   },
   context: ResolverContext
 ): Promise<Users> {
+  const { nickname, profilePicture, status, ...roles } = arg.data;
   return context.orm.users.update({
     where: { id: parseInt(arg.id, 10) },
-    data: arg.data.data,
+    data: {
+      nickname: nickname,
+      profilePicture: profilePicture,
+      status: status,
+      role: {
+        update: {
+          ...roles
+        }
+      }
+    },
   });
 }
 

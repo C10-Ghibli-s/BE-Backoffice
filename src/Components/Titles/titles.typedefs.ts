@@ -17,6 +17,7 @@ export const titleTypeDefs = gql `
     title: String!
     originalTitle: String!
     romajiTitle: String
+    movieId: Int!
 
     filmDescription: String
     movieBanner: String
@@ -55,6 +56,7 @@ export const titlesResolvers = {
   Query: queries,
   Mutation: {
     createTitle: mutations.createTitle,
+    updateTitle: mutations.updateTitle,
     deleteTitle: mutations.deleteTitle,
   },
   Titles: mutations.resolver,

@@ -76,18 +76,13 @@ export function updateInteraction(
   parent: unknown,
   arg: {
     id: string;
-    data: {
-      data: Pick<
-        Interactions,
-        'movieId' | 'scoreByEmoji' | 'scoreByStars' | 'seenMark' | 'userId'
-      >;
-    };
+    data: Interactions;
   },
   context: ResolverContext
 ): Promise<Interactions> {
   return context.orm.interactions.update({
     where: { id: parseInt(arg.id, 10) },
-    data: arg.data.data,
+    data: arg.data,
   });
 }
 
