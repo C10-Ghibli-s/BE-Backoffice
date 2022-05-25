@@ -9,9 +9,7 @@ export function showAllMusicians(
   arg: unknown,
   context: ResolverContext
 ): Promise<Musicians[]> {
-  return context.orm.musicians.findMany({
-    include: { movies: true },
-  });
+  return context.orm.musicians.findMany();
 }
 export function getAMusician(
   parent: unknown,

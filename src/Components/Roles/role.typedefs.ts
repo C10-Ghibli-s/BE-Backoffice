@@ -1,6 +1,8 @@
 import { gql } from 'apollo-server-hapi';
 import * as queries from './role.queries';
 import * as mutations from './role.mutations';
+import * as scalars from './../../GraphQL/scalars';
+import { types } from './../../GraphQL/types';
 
 export const roleTypeDefs = gql `
   scalar DateTime
@@ -17,19 +19,20 @@ export const roleTypeDefs = gql `
     SUPERADMIN
   }
 
-  interface BaseTime {
+  interface BaseModel {
     id: ID!
-    createdAT: DateTime!
     updatedAt: DateTime
+    createdAt: DateTime!
+    status: Status!
   }
 
-  type Roles implements BaseTime {
+  type Roles implements BaseModel {
     id: ID!
-    createdAT: DateTime!
     updatedAt: DateTime
+    createdAt: DateTime!
+    status: Status!
 
     name: Role!
-    status: Status!
     user: [Users]
   }
 
@@ -61,6 +64,8 @@ export const roleTypeDefs = gql `
 `;
 
 export const rolesResolvers = {
+  ...scalars,
   Query: queries,
   Mutation: mutations,
+  ...types,
 };

@@ -9,9 +9,7 @@ export function showAllDirectors(
   arg: unknown,
   context: ResolverContext
 ): Promise<Directors[]> {
-  return context.orm.directors.findMany({
-    include: { movies: true },
-  });
+  return context.orm.directors.findMany();
 }
 export function getADirector(
   parent: unknown,

@@ -1,13 +1,14 @@
 import { gql } from 'apollo-server-hapi';
 import * as queries from './writers.queries';
 import * as mutations from './writers.mutations';
+import * as scalars from './../../GraphQL/scalars';
 
 export const writersTypeDefs = gql `
 
   type Writers {
     id: ID!
     name: String!
-    # movies: [Movies]
+    movies: [Movies]
   }
 
   input WriterInput {
@@ -36,6 +37,7 @@ export const writersTypeDefs = gql `
 `;
 
 export const writersResolvers = {
+  ...scalars,
   Query: queries,
   Mutation: mutations,
 };

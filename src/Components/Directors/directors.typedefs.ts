@@ -7,7 +7,7 @@ export const directorsTypeDefs = gql `
   type Directors {
     id: ID!
     name: String!
-    # movies: [Movies]
+    movies: [Movies]
   }
 
   input DirectorInput {

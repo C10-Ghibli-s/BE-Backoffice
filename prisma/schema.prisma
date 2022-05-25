@@ -18,8 +18,8 @@ model Users {
   password          String
   interaction       Interactions[]
   role              Roles       @relation(fields: [roleId], references: [id])
-  roleId            Int         @map("role_id")
-  joinedAt          DateTime    @default(now()) @map("joined_at")
+  roleId            Int          @map("role_id")
+  createdAt         DateTime    @default(now()) @map("joined_at")
   updatedAt         DateTime?   @updatedAt @map("updated_at")
   status            Status      @default(ACTIVE)
   nickname          String      @unique
@@ -43,10 +43,10 @@ model Interactions {
   scoreByEmoji      String?     @map("score_by_emoji")
   scoreByStars      Decimal?    @map("score_by_stars")
   seenMark          Boolean     @default(false) @map("seen_mark")
-  user              Users       @relation(fields: [userId], references: [id])
-  userId            Int         @map("user_id")
-  movie             Movies      @relation(fields: [movieId], references: [id])
-  movieId           Int         @map("movie_id")
+  user              Users?      @relation(fields: [userId], references: [id])
+  userId            Int?        @map("user_id")
+  movie             Movies?     @relation(fields: [movieId], references: [id])
+  movieId           Int?         @map("movie_id")
 }
 
 model Movies {

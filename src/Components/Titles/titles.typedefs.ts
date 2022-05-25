@@ -9,13 +9,23 @@ export const titleTypeDefs = gql `
     title: String!
     originalTitle: String!
     romajiTitle: String
-    # movie: Movies
+    movieId: Int!
+    movie: Movies
   }
 
   input TitleInput {
     title: String!
     originalTitle: String!
     romajiTitle: String
+
+    filmDescription: String
+    movieBanner: String
+    audienceScore: Float
+    releaseDate: String
+    userName: String
+    linkWiki: String
+    duration: Int
+    status: Status
   }
 
   input TitleEditInput {
@@ -43,5 +53,9 @@ export const titleTypeDefs = gql `
 
 export const titlesResolvers = {
   Query: queries,
-  Mutation: mutations,
+  Mutation: {
+    createTitle: mutations.createTitle,
+    deleteTitle: mutations.deleteTitle,
+  },
+  Titles: mutations.resolver,
 };
