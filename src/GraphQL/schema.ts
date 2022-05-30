@@ -28,6 +28,13 @@ import {
   interactionsTypeDefs,
 } from './../Components/Interactions/interations.typedefs';
 
+import {
+  moviesResolvers,
+  moviesTypeDefs,
+} from './../Components/Movies/movies.typedefs';
+
+
+
 const rootTypeDefs = gql`
   type Query {
     "Shows a greeting message"
@@ -53,6 +60,7 @@ export const typeDefs = [
   musiciansTypeDefs,
   directorsTypeDefs,
   interactionsTypeDefs,
+  moviesTypeDefs,
 ];
 export const resolvers = [
   rootResolvers,
@@ -63,4 +71,5 @@ export const resolvers = [
   musiciansResolvers,
   directorsResolvers,
   interactionsResolvers,
+  moviesResolvers,
 ];

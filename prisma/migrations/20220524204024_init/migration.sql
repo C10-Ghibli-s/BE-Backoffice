@@ -30,8 +30,8 @@ CREATE TABLE `interactions` (
     `score_by_emoji` VARCHAR(191) NULL,
     `score_by_stars` DECIMAL(65, 30) NULL,
     `seen_mark` BOOLEAN NOT NULL DEFAULT false,
-    `user_id` INTEGER NOT NULL,
-    `movie_id` INTEGER NOT NULL,
+    `user_id` INTEGER NULL,
+    `movie_id` INTEGER NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -126,10 +126,10 @@ CREATE TABLE `_DirectorsToMovies` (
 ALTER TABLE `users` ADD CONSTRAINT `users_role_id_fkey` FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `interactions` ADD CONSTRAINT `interactions_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `interactions` ADD CONSTRAINT `interactions_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `interactions` ADD CONSTRAINT `interactions_movie_id_fkey` FOREIGN KEY (`movie_id`) REFERENCES `movies`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `interactions` ADD CONSTRAINT `interactions_movie_id_fkey` FOREIGN KEY (`movie_id`) REFERENCES `movies`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `titles` ADD CONSTRAINT `titles_movie_id_fkey` FOREIGN KEY (`movie_id`) REFERENCES `movies`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

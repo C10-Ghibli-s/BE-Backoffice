@@ -7,7 +7,7 @@ export const musiciansTypeDefs = gql `
   type Musicians {
     id: ID!
     name: String!
-    # movies: [Movies]
+    movies: [Movies]
   }
 
   input MusicianInput {

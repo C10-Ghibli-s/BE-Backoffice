@@ -9,9 +9,7 @@ export function showAllRoles(
   arg: unknown,
   context: ResolverContext
 ): Promise<Roles[]> {
-  return context.orm.roles.findMany({
-    include: { users: true },
-  });
+  return context.orm.roles.findMany();
 }
 export function getARole(
   parent: unknown,

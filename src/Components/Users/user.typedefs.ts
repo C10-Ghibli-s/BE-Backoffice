@@ -1,6 +1,9 @@
 import { gql } from 'apollo-server-hapi';
 import * as queries from './user.queries';
 import * as mutations from './user.mutations';
+import * as scalars from './../../GraphQL/scalars';
+import { types } from './../../GraphQL/types';
+
 
 export const userTypeDefs = gql`
   scalar DateTime
@@ -14,19 +17,21 @@ export const userTypeDefs = gql`
   interface BaseModel {
     id: ID!
     updatedAt: DateTime
-    joinedAt: DateTime!
+    createdAt: DateTime!
+    status: Status!
   }
 
   type Users implements BaseModel{
     id: ID!
-    joinedAt: DateTime!
     updatedAt: DateTime
+    createdAt: DateTime!
+    status: Status!
 
     nickname: String!
     profilePicture: String
     password: String!
     role: Roles
-    status: Status
+    roleId: Int!
     interactions: [Interactions]
   }
 
@@ -36,20 +41,41 @@ export const userTypeDefs = gql`
     password: String!
     profilePicture: String
     status: Status!
+    name: Role
+  }
+
+  input UserEditInput {
+    nickname: String
+    profilePicture: String
+    status: Status
+    name: Role
   }
 
   extend type Query {
-    "Return all the users"
+    "Return all the Users"
     showAllUsers: [Users]
+    "Get an User"
+    getAnUser(id: ID!): Users
   }
 
   extend type Mutation {
-    "Create a new user"
+    "Create a new User"
     createUser(data: UserInput!): Users
+    "Update a User"
+    updateUser(id: ID!, data: UserEditInput!): Users
+    "Delete a User"
+    deleteAnUser(id: ID!): String
   }
 `;
 
 export const userResolvers = {
+  ...scalars,
   Query: queries,
-  Mutation: mutations,
+  Mutation: {
+    createUser: mutations.createUser,
+    updateUser: mutations.updateUser,
+    deleteAnUser: mutations.deleteAnUser,
+  },
+  Users: mutations.resolver,
+  ...types,
 };

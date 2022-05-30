@@ -9,9 +9,7 @@ export function showAllWriters(
   arg: unknown,
   context: ResolverContext
 ): Promise<Writers[]> {
-  return context.orm.writers.findMany({
-    include: { movies: true },
-  });
+  return context.orm.writers.findMany();
 }
 export function getAWriter(
   parent: unknown,
