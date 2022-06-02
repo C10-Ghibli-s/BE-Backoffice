@@ -22,13 +22,13 @@ The project structure implements technologies like docker
 in order to mount image of mysql, hapi js framework of Node js, and GraphQL with helps from Apollo server for create the API. Finally, Deploy all the project in Digital Ocean.
 
 ## Table of Contents
-1. [Config Environment](#🫕-config-environment)
-2. [Built With](#📃-built-with)
-3. [Getting Started](#📦️-getting-started)
-4. [Installation](#🥣-installation)
-4. [The data base modeling](#🍱-the-database-modeling)
-5. [Deploy](#🍜-deploy)
-6. [Our Team](#👨‍🍳👩‍🍳-our-team)
+1. [Config Environment](#-config-environment)
+2. [Built With](#-built-with)
+3. [Getting Started](#-getting-started)
+4. [Installation](#-installation)
+4. [The data base modeling](#-the-database-modeling)
+5. [Deploy](#-deploy)
+6. [Our Team](#-our-team)
 
 ## 🫕 Config Environment
 Make sure that you have install node js, docker is a nice tool to container images of applications, we are going to use it to run an image of mysql; or you can run your local databa application.
