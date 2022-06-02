@@ -24,7 +24,7 @@ in order to mount image of mysql, hapi js framework of Node js, and GraphQL with
 ## Table of Contents
 1. [Config Environment](#-config-environment)
 2. [Built With](#-built-with)
-3. [Getting Started](#-getting-started)
+3. [Getting Started](#%EF%B8%8F-getting-started)
 4. [Installation](#-installation)
 4. [The data base modeling](#-the-database-modeling)
 5. [Deploy](#-deploy)
@@ -90,7 +90,9 @@ PHPMA_PORT=own_port
 
 ![Docker-gif](./src/Public/img/docker.gif)
 
-6. Finally, run the app with the command, **Hello world! to Studio-Ghibli Backoffice**:  
+6. The last stap before run the app, it's the command `npx prisma migrate dev` for be able to have the entities and relations between them in your local machine.
+
+7. Finally, run the app with the command, **Hello world! to Studio-Ghibli Backoffice**:  
 `npm run dev`
 
 ![runapp-gif](./src/Public/img/runapp.gif)
