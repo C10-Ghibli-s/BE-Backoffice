@@ -1,4 +1,7 @@
-import { ApolloServer, ApolloServerPluginStopHapiServer} from 'apollo-server-hapi';
+import {
+  ApolloServer,
+  ApolloServerPluginStopHapiServer,
+} from 'apollo-server-hapi';
 import { Server } from '@hapi/hapi';
 import { routes } from './app.routes';
 import { typeDefs, resolvers } from './GraphQL/schema';
@@ -9,14 +12,14 @@ import { configValidator } from './Config/validatorSchema';
 //* Instance of prisma ORM
 const orm = new PrismaClient();
 
-export async function init () {
+export async function init() {
   //* Instance hapi server
   const app = new Server({
-    port: config.port||3000,
+    port: config.port || 3000,
     host: 'localhost',
     routes: {
       cors: true,
-    }
+    },
   });
   //* Instance Apollo server
   const server = new ApolloServer({
@@ -26,7 +29,7 @@ export async function init () {
       orm,
     },
     csrfPrevention: true,
-    plugins: [ApolloServerPluginStopHapiServer({hapiServer: app})],
+    plugins: [ApolloServerPluginStopHapiServer({ hapiServer: app })],
   });
   routes(app);
 
@@ -36,10 +39,15 @@ export async function init () {
   //? Initialize Apollo server
   await server.start();
   await server.applyMiddleware({ app });
-};
+}
 
+// * Manage the unhandledRejection error
 process.on('unhandledRejection', (err) => {
   console.log(err);
   process.exit(1);
 });
 
+// * Manage the unhandledException error
+process.on('uncaughtException', (error) => {
+  console.error('unhandledException', error.message, error);
+});

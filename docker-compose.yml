@@ -1,6 +1,7 @@
 services:
   mysql:
     image: mysql:5
+    container_name: mysqlDB
     environment:
       - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
@@ -11,6 +12,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    container_name: phpmyadminDB
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - PMA_HOST=mysql
