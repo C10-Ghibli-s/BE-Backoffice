@@ -18,7 +18,7 @@ model Users {
   password          String
   interaction       Interactions[]
   role              Roles       @relation(fields: [roleId], references: [id])
-  roleId            Int          @map("role_id")
+  roleId            Int         @map("role_id")
   createdAt         DateTime    @default(now()) @map("joined_at")
   updatedAt         DateTime?   @updatedAt @map("updated_at")
   status            Status      @default(ACTIVE)

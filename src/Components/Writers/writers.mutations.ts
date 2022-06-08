@@ -4,25 +4,43 @@ type ResolverContext = {
   orm: PrismaClient;
 };
 
-export function createWriter(
+export async function createWriter(
   parent: unknown,
   { data }: { data: Pick<Writers, 'name'> },
   context: ResolverContext
-): Promise<Writers> {
-  return context.orm.writers.create({
-    data,
+): Promise<Writers | undefined> {
+  const writers = await context.orm.writers.findUnique({
+    where: { name: data.name },
   });
+  if (writers === null) {
+    return context.orm.writers.create({
+      data,
+    });
+  }
+  throw new Error(`The Writer with name ${data.name} already exist`);
 }
 
-export function updateWriter(
+export async function updateWriter(
   parent: unknown,
-  arg: { id: string; data: { data: Pick<Writers, 'name'> } },
+  arg: { id: string; data: Writers },
   context: ResolverContext
-): Promise<Writers> {
-  return context.orm.writers.update({
+): Promise<Writers | undefined> {
+  let writers = await context.orm.writers.findUnique({
     where: { id: parseInt(arg.id, 10) },
-    data: arg.data,
   });
+  if (writers === null) {
+    throw new Error(`The Writer with id ${arg.id} , does not exist.`);
+  }
+  writers = await context.orm.writers.findUnique({
+    where: { name: arg.data.name },
+  });
+  if (writers === null) {
+    return await context.orm.writers.update({
+      where: { id: parseInt(arg.id, 10) },
+      data: arg.data,
+    });
+  }
+  throw new Error(`The Writer with name ${arg.data.name} already exists.`);
 }
 
 export async function deleteWriter(
@@ -30,6 +48,12 @@ export async function deleteWriter(
   arg: { id: string },
   context: ResolverContext
 ) {
+  const director = await context.orm.writers.findUnique({
+    where: { id: parseInt(arg.id, 10) },
+  });
+  if (!director) {
+    throw new Error(`The Writer with id ${arg.id} , does not exist.`);
+  }
   await context.orm.writers.delete({
     where: { id: parseInt(arg.id, 10) },
   });

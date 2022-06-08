@@ -10,42 +10,75 @@ export async function createUser(
   {
     data,
   }: {
-    data: Pick<Users, 'nickname' | 'password' | 'profilePicture' | 'status'> &
-      Roles;
+    data: Users;
   },
   context: ResolverContext
-): Promise<Users> {
-  const { nickname, password, profilePicture, status, ...roles } = data;
+): Promise<Users | undefined> {
+  const { nickname, password, profilePicture, status, roleId } = data;
 
   const hashPassword = await bcrypt.hash(password, 10);
-
-  return context.orm.users.create({
-    data: {
-      nickname,
-      password: hashPassword,
-      profilePicture,
-      status,
-      role: {
-        create: {
-          ...roles,
+  const user = await context.orm.users.findUnique({
+    where: { nickname: nickname },
+  });
+  if (user === null) {
+    return await context.orm.users.create({
+      data: {
+        nickname,
+        password: hashPassword,
+        profilePicture,
+        status,
+        role: {
+          connect: {
+            id: roleId,
+          },
         },
       },
-    },
-    include: {
-      role: true,
-    },
-  });
+      include: {
+        role: true,
+      },
+    });
+  }
+  throw new Error(`The User with nickname ${nickname} already exist`);
 }
 
-export function updateUser(
+export async function updateUser(
   parent: unknown,
   arg: {
     id: string;
-    data: Users & Roles;
+    data: Users;
   },
   context: ResolverContext
-): Promise<Users> {
-  const { nickname, profilePicture, status, ...roles } = arg.data;
+): Promise<Users | undefined> {
+  const { nickname, profilePicture, status, roleId } = arg.data;
+  let user = await context.orm.users.findUnique({
+    where: { id: parseInt(arg.id, 10) },
+  });
+  if (!user) {
+    throw new Error(`The User with id ${arg.id} does not exists.`);
+  }else if (nickname) {
+    user = await context.orm.users.findUnique({
+      where: { nickname: nickname },
+    });
+    if (user === null) {
+      return context.orm.users.update({
+        where: { id: parseInt(arg.id, 10) },
+        data: {
+          nickname: nickname,
+          profilePicture: profilePicture,
+          status: status,
+          role: {
+            connect: {
+              id: roleId,
+            },
+          },
+        },
+        include: {
+          role: true
+        }
+      });
+    }
+    throw new Error(`The User with nickname ${nickname} already exists.`);
+  }
   return context.orm.users.update({
     where: { id: parseInt(arg.id, 10) },
     data: {
@@ -53,11 +86,14 @@ export function updateUser(
       profilePicture: profilePicture,
       status: status,
       role: {
-        update: {
-          ...roles
-        }
-      }
+        connect: {
+          id: roleId,
+        },
+      },
     },
+    include: {
+      role: true
+    }
   });
 }
 
@@ -66,6 +102,12 @@ export async function deleteAnUser(
   arg: { id: string },
   context: ResolverContext
 ) {
+  const user = await context.orm.users.findUnique({
+    where: { id: parseInt(arg.id, 10) },
+  });
+  if (!user) {
+    throw new Error(`The User with id ${arg.id}, does not exist.`);
+  }
   await context.orm.users.delete({
     where: { id: parseInt(arg.id, 10) },
   });

@@ -13,11 +13,11 @@ export async function createDirector(
     where: { name: data.name },
   });
   if (director === null) {
-    return context.orm.directors.create({
+    return await context.orm.directors.create({
       data,
     });
   }
-  throw new Error(`The Directors with name ${data.name} already exist`);
+  throw new Error(`The Director with name ${data.name} already exists.`);
 }
 
 export async function updateDirector(
@@ -29,7 +29,7 @@ export async function updateDirector(
     where: { id: parseInt(arg.id, 10) },
   });
   if (director === null) {
-    throw new Error(`The Director with id ${arg.id} does not exists.`);
+    throw new Error(`The Director with id ${arg.id} does not exist.`);
   }
   director = await context.orm.directors.findUnique({
     where: { name: arg.data.name },
@@ -52,7 +52,7 @@ export async function deleteDierctor(
     where: { id: parseInt(arg.id, 10) },
   });
   if (!director) {
-    throw new Error(`The Director with id ${arg.id} does not exists.`);
+    throw new Error(`The Director with id ${arg.id} does not exist.`);
   }
   await context.orm.directors.delete({
     where: { id: parseInt(arg.id, 10) },

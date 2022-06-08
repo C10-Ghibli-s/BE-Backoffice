@@ -28,7 +28,7 @@ export async function getADirector(
     include: { movies: true },
   });
   if (!director) {
-    throw new Error(`The Director with id ${arg.id}, Does not exists.`);
+    throw new Error(`The Director with id ${arg.id}, does not exist.`);
   }
   return director;
 }

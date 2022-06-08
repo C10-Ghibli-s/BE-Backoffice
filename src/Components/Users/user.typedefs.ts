@@ -41,14 +41,14 @@ export const userTypeDefs = gql`
     password: String!
     profilePicture: String
     status: Status!
-    name: Role
+    roleId: Int!
   }
 
   input UserEditInput {
     nickname: String
     profilePicture: String
     status: Status
-    name: Role
+    roleId: Int!
   }
 
   extend type Query {

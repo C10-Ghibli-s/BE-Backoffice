@@ -1,24 +1,35 @@
 import { PrismaClient, Titles } from '@prisma/client';
+import { errorHandler } from '../../middleware';
 
 type ResolverContext = {
   orm: PrismaClient;
 };
 
-export function showAllTitles(
+export async function showAllTitles(
   parent: unknown,
   arg: unknown,
   context: ResolverContext
-): Promise<Titles[]> {
-  return context.orm.titles.findMany();
+): Promise<Titles[] | undefined> {
+  let titles: Array<Titles>;
+  try {
+    titles = await context.orm.titles.findMany();
+    return titles;
+  } catch (error) {
+    errorHandler(error);
+  }
 }
-export function getATitle(
+export async function getATitle(
   parent: unknown,
   arg: { id: string },
   context: ResolverContext
 ): Promise<Titles | null> {
-  return context.orm.titles.findUnique({
+  const titles = await context.orm.titles.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: { movie: true },
   });
+  if (!titles) {
+    throw new Error(`The Title with id ${arg.id}, does not exist.`);
+  }
+  return titles;
 }
 
