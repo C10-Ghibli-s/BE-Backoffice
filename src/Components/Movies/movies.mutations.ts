@@ -11,7 +11,7 @@ type ResolverContext = {
   orm: PrismaClient;
 };
 
-export function createAMovie(
+export async function createAMovie(
   parent: unknown,
   {
     data,
@@ -42,7 +42,18 @@ export function createAMovie(
     audienceScore,
     ...titles
   } = data;
-  return context.orm.movies.create({
+  const title = await context.orm.titles.findUnique({
+    where: { title: titles.title }
+  });
+  const originalTitle = await context.orm.titles.findUnique({
+    where: { originalTitle: titles.originalTitle }
+  });
+  if (title) {
+    throw new Error(`That Title "${titles.title}"already exists.`);
+  }else if (originalTitle) {
+    throw new Error(`That Original Title "${titles.originalTitle}"already exists.`);
+  }
+  return await context.orm.movies.create({
     data: {
       filmDescription,
       duration,
@@ -102,7 +113,7 @@ export const resolver: Record<
   }),
 };
 
-export function updateAMovie(
+export async  function updateAMovie(
   parent: unknown,
   arg: {
     id: string;
@@ -121,6 +132,12 @@ export function updateAMovie(
   },
   context: ResolverContext
 ): Promise<Movies> {
+  const movie = await context.orm.movies.findUnique({
+    where: { id: parseInt(arg.id, 10) }
+  });
+  if (!movie) {
+    throw new Error(`The Movie with id ${arg.id}, does not exist.`);
+  }
   return context.orm.movies.update({
     where: { id: parseInt(arg.id, 10) },
     data: arg.data,
@@ -132,6 +149,12 @@ export async function deleteMovie(
   arg: { id: string },
   context: ResolverContext
 ) {
+  const movie = await context.orm.movies.findUnique({
+    where: { id: parseInt(arg.id, 10) }
+  });
+  if (!movie) {
+    throw new Error(`The Movie with id ${arg.id}, does not exist.`);
+  }
   await context.orm.movies.delete({
     where: { id: parseInt(arg.id, 10) },
   });

@@ -1,23 +1,34 @@
 import { PrismaClient, Writers } from '@prisma/client';
+import { errorHandler } from '../../middleware';
 
 type ResolverContext = {
   orm: PrismaClient;
 };
 
-export function showAllWriters(
+export async function showAllWriters(
   parent: unknown,
   arg: unknown,
   context: ResolverContext
-): Promise<Writers[]> {
-  return context.orm.writers.findMany();
+): Promise<Writers[] | undefined> {
+  let writers: Array<Writers>;
+  try {
+    writers = await context.orm.writers.findMany();
+    return writers;
+  } catch (error) {
+    errorHandler(error);
+  }
 }
-export function getAWriter(
+export async function getAWriter(
   parent: unknown,
   arg: { id: string },
   context: ResolverContext
 ): Promise<Writers | null> {
-  return context.orm.writers.findUnique({
+  const writers = await context.orm.writers.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: { movies: true },
   });
+  if (!writers) {
+    throw new Error(`The Writer with id ${arg.id}, does not exist.`);
+  }
+  return writers;
 }

@@ -1,10 +1,15 @@
 import { Server } from '@hapi/hapi';
-import { site } from './app.controller';
+import { site, notFound } from './app.controller';
 
-export const routes = (server: Server) => {
+export const routes = async (server: Server) => {
   server.route({
     method: 'GET',
     path: '/',
     handler: site,
+  });
+  server.route({
+    method: ['GET', 'POST'],
+    path: '/{any*}',
+    handler: notFound
   });
 };

@@ -22,13 +22,13 @@ The project structure implements technologies like docker
 in order to mount image of mysql, hapi js framework of Node js, and GraphQL with helps from Apollo server for create the API. Finally, Deploy all the project in Digital Ocean.
 
 ## Table of Contents
-1. [Config Environment](#🫕-config-environment)
-2. [Built With](#📃-built-with)
-3. [Getting Started](#📦️-getting-started)
-4. [Installation](#🥣-installation)
-4. [The data base modeling](#🍱-the-database-modeling)
-5. [Deploy](#🍜-deploy)
-6. [Our Team](#👨‍🍳👩‍🍳-our-team)
+1. [Config Environment](#-config-environment)
+2. [Built With](#-built-with)
+3. [Getting Started](#%EF%B8%8F-getting-started)
+4. [Installation](#-installation)
+4. [The data base modeling](#-the-database-modeling)
+5. [Deploy](#-deploy)
+6. [Our Team](#-our-team)
 
 ## 🫕 Config Environment
 Make sure that you have install node js, docker is a nice tool to container images of applications, we are going to use it to run an image of mysql; or you can run your local databa application.
@@ -90,7 +90,9 @@ PHPMA_PORT=own_port
 
 ![Docker-gif](./src/Public/img/docker.gif)
 
-6. Finally, run the app with the command, **Hello world! to Studio-Ghibli Backoffice**:  
+6. The last stap before run the app, it's the command `npx prisma migrate dev` for be able to have the entities and relations between them in your local machine.
+
+7. Finally, run the app with the command, **Hello world! to Studio-Ghibli Backoffice**:  
 `npm run dev`
 
 ![runapp-gif](./src/Public/img/runapp.gif)

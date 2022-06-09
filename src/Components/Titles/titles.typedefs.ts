@@ -18,21 +18,13 @@ export const titleTypeDefs = gql `
     originalTitle: String!
     romajiTitle: String
     movieId: Int!
-
-    filmDescription: String
-    movieBanner: String
-    audienceScore: Float
-    releaseDate: String
-    userName: String
-    linkWiki: String
-    duration: Int
-    status: Status
   }
 
   input TitleEditInput {
     title: String
     originalTitle: String
     romajiTitle: String
+    movie: Int
   }
 
   extend type Query {

@@ -4,25 +4,43 @@ type ResolverContext = {
   orm: PrismaClient;
 };
 
-export function createDirector(
+export async function createDirector(
   parent: unknown,
   { data }: { data: Pick<Directors, 'name'> },
   context: ResolverContext
-): Promise<Directors> {
-  return context.orm.directors.create({
-    data,
+): Promise<Directors | undefined> {
+  const director = await context.orm.directors.findUnique({
+    where: { name: data.name },
   });
+  if (director === null) {
+    return await context.orm.directors.create({
+      data,
+    });
+  }
+  throw new Error(`The Director with name ${data.name} already exists.`);
 }
 
-export function updateDirector(
+export async function updateDirector(
   parent: unknown,
-  arg: { id: string; data: { data: Pick<Directors, 'name'> } },
+  arg: { id: string; data: Directors },
   context: ResolverContext
-): Promise<Directors> {
-  return context.orm.directors.update({
+): Promise<Directors | undefined> {
+  let director = await context.orm.directors.findUnique({
     where: { id: parseInt(arg.id, 10) },
-    data: arg.data,
   });
+  if (director === null) {
+    throw new Error(`The Director with id ${arg.id} does not exist.`);
+  }
+  director = await context.orm.directors.findUnique({
+    where: { name: arg.data.name },
+  });
+  if (director === null) {
+    return context.orm.directors.update({
+      where: { id: parseInt(arg.id, 10) },
+      data: arg.data,
+    });
+  }
+  throw new Error(`The Director with name ${arg.data.name} already exists.`);
 }
 
 export async function deleteDierctor(
@@ -30,6 +48,12 @@ export async function deleteDierctor(
   arg: { id: string },
   context: ResolverContext
 ) {
+  const director = await context.orm.directors.findUnique({
+    where: { id: parseInt(arg.id, 10) },
+  });
+  if (!director) {
+    throw new Error(`The Director with id ${arg.id} does not exist.`);
+  }
   await context.orm.directors.delete({
     where: { id: parseInt(arg.id, 10) },
   });
