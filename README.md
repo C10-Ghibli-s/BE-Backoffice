@@ -87,9 +87,9 @@ PHPMA_PORT=own_port
 
 # Variable for Auth0
 # The url of your Auth0 tenant domain
-AUTH0_ISSUER_BASE_URL='https://dev-4akxi3tp.us.auth0.com'
+AUTH0_ISSUER_BASE_URL
 # Your Auth0 API's Identifier
-AUTH0_AUDIENCE='https://movietrackerbo.com/api'
+AUTH0_AUDIENCE
 
 ```
 5. Defore start to run the app, we have to make up the image container, so in the terminal run:  
