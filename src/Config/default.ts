@@ -15,4 +15,6 @@ dotenv.config({ path: path });
 export default {
   port: process.env.PORT,
   environment: process.env.ENVIRONMENT,
+  auth0IssuerBaseUrl: process.env.AUTH0_ISSUER_BASE_URL,
+  auth0Audience: process.env.AUTH0_AUDIENCE
 };

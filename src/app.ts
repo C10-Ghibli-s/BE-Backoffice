@@ -8,6 +8,7 @@ import { typeDefs, resolvers } from './GraphQL/schema';
 import config from './Config/default';
 import { PrismaClient } from '@prisma/client';
 import { configValidator } from './Config/validatorSchema';
+import { CheckJWT } from './auth/auth.strategy';
 
 //* Instance of prisma ORM
 const orm = new PrismaClient();
@@ -17,6 +18,7 @@ export async function init() {
   const app = new Server({
     port: config.port || 3000,
     host: 'localhost',
+    //! Remember to add only the base URL from the FE
     routes: {
       cors: true,
     },
@@ -32,6 +34,18 @@ export async function init() {
     plugins: [ApolloServerPluginStopHapiServer({ hapiServer: app })],
   });
   routes(app);
+  /* //? Pino function
+  await app.register({
+    plugin: require('hapi-pino'),
+    options: {
+      // prettyPrint: process.env.NODE_ENV !== 'production',
+      // Redact Authorization headers, see https://getpino.io/#/docs/redaction
+      redact: ['req.headers.authorization'],
+      ignorePaths: ['/graphql'],
+    }
+  }); */
+  // * Initialaice the strategy verify tokens
+  await CheckJWT(app);
 
   //! 🚧 Validation schema
   configValidator(process.env, app);
