@@ -5,7 +5,8 @@ export async function configValidator(envVars: object, server: Server) {
   const { error } = envSchema.validate(envVars);
   if (error) {
     server.stop();
-    return console.log(error.message + '. In order to run the server, please add the environment varibles that it requests.');
+    console.log(error.message + '. In order to run the server, please add the environment varibles that it requests.');
+    process.exit(1);
   }
   //* Initialize Hapi server
   await server.start();
