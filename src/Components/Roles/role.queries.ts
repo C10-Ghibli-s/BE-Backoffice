@@ -1,7 +1,7 @@
 import { Roles } from '@prisma/client';
 import { errorHandler } from '../../middleware';
 import { ResolverContext } from '../../utils/typeContext';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedSuperAdmin } from '../../utils/authorization.error';
 import { isRoles } from './utils/errors.roles';
 
 export async function showAllRoles(
@@ -10,6 +10,7 @@ export async function showAllRoles(
   context: ResolverContext
 ): Promise<Roles[] | undefined> {
   unauthenticated();
+  unauthorizedSuperAdmin();
   let roles: Array<Roles>;
   try {
     roles = await context.orm.roles.findMany();
@@ -24,6 +25,7 @@ export async function getARole(
   context: ResolverContext
 ): Promise<Roles | null> {
   unauthenticated();
+  unauthorizedSuperAdmin();
   const role = await context.orm.roles.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: { users: true },

@@ -1,7 +1,7 @@
 import { Titles } from '@prisma/client';
 import { errorHandler } from '../../middleware';
 import { ResolverContext } from '../../utils/typeContext';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedUserAdmin } from '../../utils/authorization.error';
 import { isTitles } from './utils/errors.titles';
 
 export async function showAllTitles(
@@ -10,6 +10,7 @@ export async function showAllTitles(
   context: ResolverContext
 ): Promise<Titles[] | undefined> {
   unauthenticated();
+  unauthorizedUserAdmin();
   let titles: Array<Titles>;
   try {
     titles = await context.orm.titles.findMany();
@@ -24,6 +25,7 @@ export async function getATitle(
   context: ResolverContext
 ): Promise<Titles | null> {
   unauthenticated();
+  unauthorizedUserAdmin();
   const titles = await context.orm.titles.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: { movie: true },

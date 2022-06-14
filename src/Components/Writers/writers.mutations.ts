@@ -1,7 +1,7 @@
 import { Writers } from '@prisma/client';
 import { ResolverContext } from '../../utils/typeContext';
 import { existWriter, isWriters } from './utils/errors.writers';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedAdmin } from '../../utils/authorization.error';
 
 export async function createWriter(
   parent: unknown,
@@ -13,6 +13,7 @@ export async function createWriter(
   });
   //* if the Users is logged.
   unauthenticated();
+  unauthorizedAdmin();
   existWriter(writers, data.name);
   return context.orm.writers.create({
     data,
@@ -28,6 +29,7 @@ export async function updateWriter(
     where: { id: parseInt(arg.id, 10) },
   });
   unauthenticated();
+  unauthorizedAdmin();
   //* Validates if there is a writer.
   isWriters(writers, arg);
   writers = await context.orm.writers.findUnique({
@@ -46,6 +48,7 @@ export async function deleteWriter(
   context: ResolverContext
 ) {
   unauthenticated();
+  unauthorizedAdmin();
   const writer = await context.orm.writers.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });

@@ -1,7 +1,7 @@
 import { Writers } from '@prisma/client';
 import { errorHandler } from '../../middleware';
 import { ResolverContext } from '../../utils/typeContext';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedUserAdmin } from '../../utils/authorization.error';
 import { isWriters } from './utils/errors.writers';
 
 export async function showAllWriters(
@@ -12,6 +12,7 @@ export async function showAllWriters(
   let writers: Array<Writers>;
   //* if the Users is logged.
   unauthenticated();
+  unauthorizedUserAdmin();
   try {
     writers = await context.orm.writers.findMany();
     return writers;
@@ -30,6 +31,7 @@ export async function getAWriter(
   });
   //* if the Users is logged.
   unauthenticated();
+  unauthorizedUserAdmin();
   //* Validates if there is a writer.
   isWriters(writers, arg);
   return writers;

@@ -6,7 +6,7 @@ import {
   Writers,
 } from '@prisma/client';
 import { ResolverContext } from '../../utils/typeContext';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedAdmin } from '../../utils/authorization.error';
 import { existTitles } from '../Titles/utils/errors.titles';
 import { isMovies } from './utils/errors.movies';
 
@@ -31,6 +31,7 @@ export async function createAMovie(
   context: ResolverContext
 ): Promise<Movies> {
   unauthenticated();
+  unauthorizedAdmin();
   const {
     status,
     userName,
@@ -129,6 +130,8 @@ export async  function updateAMovie(
   context: ResolverContext
 ): Promise<Movies> {
   unauthenticated();
+  unauthorizedAdmin();
+
   const movie = await context.orm.movies.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });
@@ -145,6 +148,8 @@ export async function deleteMovie(
   context: ResolverContext
 ) {
   unauthenticated();
+  unauthorizedAdmin();
+
   const movie = await context.orm.movies.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });

@@ -1,7 +1,7 @@
 import { Roles } from '@prisma/client';
 import { errorHandler } from '../../middleware';
 import { ResolverContext } from '../../utils/typeContext';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedSuper, unauthorizedSuperAdmin } from '../../utils/authorization.error';
 import { isRoles } from './utils/errors.roles';
 
 export async function createRole(
@@ -10,6 +10,7 @@ export async function createRole(
   context: ResolverContext
 ): Promise<Roles | undefined> {
   unauthenticated();
+  unauthorizedSuperAdmin();
   try {
     const role = await context.orm.roles.create({
       data,
@@ -26,6 +27,7 @@ export async function updateRole(
   context: ResolverContext
 ): Promise<Roles> {
   unauthenticated();
+  unauthorizedSuperAdmin();
   const role = await context.orm.roles.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });
@@ -42,6 +44,7 @@ export async function deleteRole(
   context: ResolverContext
 ) {
   unauthenticated();
+  unauthorizedSuper();
   const role = await context.orm.roles.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });

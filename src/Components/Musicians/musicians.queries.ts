@@ -1,7 +1,7 @@
 import { Musicians } from '@prisma/client';
 import { errorHandler } from '../../middleware';
 import { ResolverContext } from '../../utils/typeContext';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedUserAdmin } from '../../utils/authorization.error';
 import { isMusicians } from './utils/errors.musicians';
 
 export async function showAllMusicians(
@@ -10,6 +10,7 @@ export async function showAllMusicians(
   context: ResolverContext
 ): Promise<Musicians[] | undefined> {
   unauthenticated();
+  unauthorizedUserAdmin();
   let musicians: Array<Musicians>;
   try {
     musicians = await context.orm.musicians.findMany();
@@ -24,6 +25,7 @@ export async function getAMusician(
   context: ResolverContext
 ): Promise<Musicians | null> {
   unauthenticated();
+  unauthorizedUserAdmin();
   const musician = await context.orm.musicians.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: { movies: true },
