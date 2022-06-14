@@ -33,8 +33,6 @@ import {
   moviesTypeDefs,
 } from './../Components/Movies/movies.typedefs';
 
-
-
 const rootTypeDefs = gql`
   type Query {
     "Shows a greeting message"

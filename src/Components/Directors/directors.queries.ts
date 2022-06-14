@@ -1,9 +1,8 @@
-import { PrismaClient, Directors } from '@prisma/client';
+import { Directors } from '@prisma/client';
 import { errorHandler } from '../../middleware/index';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { ResolverContext } from '../../utils/typeContext';
+import { unauthenticated } from '../../utils/authorization.error';
+import { isDirector } from './utils/errors.directors';
 
 export async function showAllDirectors(
   parent: unknown,
@@ -11,6 +10,7 @@ export async function showAllDirectors(
   context: ResolverContext
 ): Promise<Directors[] | undefined> {
   let directors: Array<Directors>;
+  unauthenticated();
   try {
     directors = await context.orm.directors.findMany();
     return directors;
@@ -23,12 +23,11 @@ export async function getADirector(
   arg: { id: string },
   context: ResolverContext
 ): Promise<Directors | null> {
+  unauthenticated();
   const director = await context.orm.directors.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: { movies: true },
   });
-  if (!director) {
-    throw new Error(`The Director with id ${arg.id}, does not exist.`);
-  }
+  isDirector(director, arg);
   return director;
 }

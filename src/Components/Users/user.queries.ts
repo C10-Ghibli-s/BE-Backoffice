@@ -1,15 +1,15 @@
-import { PrismaClient, Users } from '@prisma/client';
+import { Users } from '@prisma/client';
 import { errorHandler } from '../../middleware';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { ResolverContext } from '../../utils/typeContext';
+import { unauthenticated } from '../../utils/authorization.error';
+import { isUsers } from './utils/errors.users';
 
 export async function showAllUsers(
   parent: unknown,
   arg: unknown,
   context: ResolverContext
 ): Promise<Users[] | undefined> {
+  unauthenticated();
   let users: Array<Users>;
   try {
     users = await context.orm.users.findMany();
@@ -24,12 +24,11 @@ export async function getAnUser(
   arg: { id: string },
   context: ResolverContext
 ): Promise<Users | null> {
+  unauthenticated();
   const user = await context.orm.users.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: { role: true },
   });
-  if (!user) {
-    throw new Error(`The User with id ${arg.id}, does not exist.`);
-  }
+  isUsers(user, arg.id);
   return user;
 }

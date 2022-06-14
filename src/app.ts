@@ -34,16 +34,17 @@ export async function init() {
     plugins: [ApolloServerPluginStopHapiServer({ hapiServer: app })],
   });
   routes(app);
-  /* //? Pino function
+  //? Pino function
   await app.register({
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     plugin: require('hapi-pino'),
     options: {
-      // prettyPrint: process.env.NODE_ENV !== 'production',
       // Redact Authorization headers, see https://getpino.io/#/docs/redaction
       redact: ['req.headers.authorization'],
       ignorePaths: ['/graphql'],
-    }
-  }); */
+    },
+  });
+
   // * Initialaice the strategy verify tokens
   await CheckJWT(app);
 
@@ -52,7 +53,7 @@ export async function init() {
 
   //? Initialize Apollo server
   await server.start();
-  await server.applyMiddleware({ app });
+  await server.applyMiddleware({ app, path: '/graphql' });
 }
 
 // * Manage the unhandledRejection error

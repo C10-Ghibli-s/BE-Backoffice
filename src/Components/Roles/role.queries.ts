@@ -1,15 +1,15 @@
-import { PrismaClient, Roles } from '@prisma/client';
+import { Roles } from '@prisma/client';
 import { errorHandler } from '../../middleware';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { ResolverContext } from '../../utils/typeContext';
+import { unauthenticated } from '../../utils/authorization.error';
+import { isRoles } from './utils/errors.roles';
 
 export async function showAllRoles(
   parent: unknown,
   arg: unknown,
   context: ResolverContext
 ): Promise<Roles[] | undefined> {
+  unauthenticated();
   let roles: Array<Roles>;
   try {
     roles = await context.orm.roles.findMany();
@@ -23,13 +23,12 @@ export async function getARole(
   arg: { id: string },
   context: ResolverContext
 ): Promise<Roles | null> {
+  unauthenticated();
   const role = await context.orm.roles.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: { users: true },
   });
-  if (!role) {
-    throw new Error(`The Role with id ${arg.id}, does not exist.`);
-  }
+  isRoles(role, arg);
   return role;
 }
 

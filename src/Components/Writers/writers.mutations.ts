@@ -1,8 +1,7 @@
-import { PrismaClient, Writers } from '@prisma/client';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { Writers } from '@prisma/client';
+import { ResolverContext } from '../../utils/typeContext';
+import { existWriter, isWriters } from './utils/errors.writers';
+import { unauthenticated } from '../../utils/authorization.error';
 
 export async function createWriter(
   parent: unknown,
@@ -12,12 +11,12 @@ export async function createWriter(
   const writers = await context.orm.writers.findUnique({
     where: { name: data.name },
   });
-  if (writers === null) {
-    return context.orm.writers.create({
-      data,
-    });
-  }
-  throw new Error(`The Writer with name ${data.name} already exist`);
+  //* if the Users is logged.
+  unauthenticated();
+  existWriter(writers, data.name);
+  return context.orm.writers.create({
+    data,
+  });
 }
 
 export async function updateWriter(
@@ -28,19 +27,17 @@ export async function updateWriter(
   let writers = await context.orm.writers.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });
-  if (writers === null) {
-    throw new Error(`The Writer with id ${arg.id} , does not exist.`);
-  }
+  unauthenticated();
+  //* Validates if there is a writer.
+  isWriters(writers, arg);
   writers = await context.orm.writers.findUnique({
     where: { name: arg.data.name },
   });
-  if (writers === null) {
-    return await context.orm.writers.update({
-      where: { id: parseInt(arg.id, 10) },
-      data: arg.data,
-    });
-  }
-  throw new Error(`The Writer with name ${arg.data.name} already exists.`);
+  existWriter(writers, arg.data.name);
+  return await context.orm.writers.update({
+    where: { id: parseInt(arg.id, 10) },
+    data: arg.data,
+  });
 }
 
 export async function deleteWriter(
@@ -48,12 +45,12 @@ export async function deleteWriter(
   arg: { id: string },
   context: ResolverContext
 ) {
-  const director = await context.orm.writers.findUnique({
+  unauthenticated();
+  const writer = await context.orm.writers.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });
-  if (!director) {
-    throw new Error(`The Writer with id ${arg.id} , does not exist.`);
-  }
+  //* Validates if there is a writer.
+  isWriters(writer, arg);
   await context.orm.writers.delete({
     where: { id: parseInt(arg.id, 10) },
   });

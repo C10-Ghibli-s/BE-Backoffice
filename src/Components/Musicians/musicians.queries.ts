@@ -1,15 +1,15 @@
-import { PrismaClient, Musicians } from '@prisma/client';
+import { Musicians } from '@prisma/client';
 import { errorHandler } from '../../middleware';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { ResolverContext } from '../../utils/typeContext';
+import { unauthenticated } from '../../utils/authorization.error';
+import { isMusicians } from './utils/errors.musicians';
 
 export async function showAllMusicians(
   parent: unknown,
   arg: unknown,
   context: ResolverContext
 ): Promise<Musicians[] | undefined> {
+  unauthenticated();
   let musicians: Array<Musicians>;
   try {
     musicians = await context.orm.musicians.findMany();
@@ -23,12 +23,11 @@ export async function getAMusician(
   arg: { id: string },
   context: ResolverContext
 ): Promise<Musicians | null> {
+  unauthenticated();
   const musician = await context.orm.musicians.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: { movies: true },
   });
-  if (!musician) {
-    throw new Error(`The Musician with id ${arg.id}, does not exist.`);
-  }
+  isMusicians(musician, arg);
   return musician;
 }

@@ -1,8 +1,7 @@
-import { Movies, PrismaClient, Titles } from '@prisma/client';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { Movies, Titles } from '@prisma/client';
+import { ResolverContext } from '../../utils/typeContext';
+import { unauthenticated } from '../../utils/authorization.error';
+import { existTitles, isTitles } from './utils/errors.titles';
 
 export function createTitle(
   parent: unknown,
@@ -13,6 +12,7 @@ export function createTitle(
   },
   context: ResolverContext
 ): Promise<Titles> {
+  unauthenticated();
   return context.orm.titles.create({
     data,
   });
@@ -23,30 +23,26 @@ export async function updateTitle(
   arg: { id: string; data: Titles; },
   context: ResolverContext
 ): Promise<Titles> {
+  unauthenticated();
   let title = await context.orm.titles.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });
-  if (title === null) {
-    throw new Error(`The Title with id ${arg.id} does not exist.`);
-  }
+  isTitles(title, arg);
   title = await context.orm.titles.findUnique({
     where: { title: arg.data.title },
   });
   const originalTitle = await context.orm.titles.findUnique({
     where: { originalTitle: arg.data.originalTitle },
   });
-  if (title === null && originalTitle === null) {
-    return context.orm.titles.update({
-      where: { id: parseInt(arg.id, 10) },
-      data: arg.data,
-      include: {
-        movie: true
-      }
-    });
-  }else if (originalTitle) {
-    throw new Error(`The Movie with Original Title ${arg.data.originalTitle} already exists.`);
-  }
-  throw new Error(`The Movie with title ${arg.data.title} already exists.`);
+  existTitles(title, originalTitle, arg.data.title, arg.data.originalTitle);
+  return context.orm.titles.update({
+    where: { id: parseInt(arg.id, 10) },
+    data: arg.data,
+    include: {
+      movie: true
+    }
+  });
+
 }
 
 export const resolver: Record<
@@ -75,12 +71,11 @@ export async function deleteTitle(
   arg: { id: string },
   context: ResolverContext
 ) {
+  unauthenticated();
   const title = await context.orm.titles.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });
-  if (!title) {
-    throw new Error(`The Title with ${arg.id}, does not exist.`);
-  }
+  isTitles(title, arg);
   await context.orm.titles.delete({
     where: { id: parseInt(arg.id, 10) },
   });

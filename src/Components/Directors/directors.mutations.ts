@@ -1,23 +1,21 @@
-import { PrismaClient, Directors } from '@prisma/client';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { Directors } from '@prisma/client';
+import { ResolverContext } from '../../utils/typeContext';
+import { existDirector, isDirector } from './utils/errors.directors';
+import { unauthenticated } from '../../utils/authorization.error';
 
 export async function createDirector(
   parent: unknown,
   { data }: { data: Pick<Directors, 'name'> },
   context: ResolverContext
 ): Promise<Directors | undefined> {
+  unauthenticated();
   const director = await context.orm.directors.findUnique({
     where: { name: data.name },
   });
-  if (director === null) {
-    return await context.orm.directors.create({
-      data,
-    });
-  }
-  throw new Error(`The Director with name ${data.name} already exists.`);
+  existDirector(director, data.name);
+  return await context.orm.directors.create({
+    data,
+  });
 }
 
 export async function updateDirector(
@@ -25,22 +23,20 @@ export async function updateDirector(
   arg: { id: string; data: Directors },
   context: ResolverContext
 ): Promise<Directors | undefined> {
+  unauthenticated();
   let director = await context.orm.directors.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });
-  if (director === null) {
-    throw new Error(`The Director with id ${arg.id} does not exist.`);
-  }
+  isDirector(director, arg);
   director = await context.orm.directors.findUnique({
     where: { name: arg.data.name },
   });
-  if (director === null) {
-    return context.orm.directors.update({
-      where: { id: parseInt(arg.id, 10) },
-      data: arg.data,
-    });
-  }
-  throw new Error(`The Director with name ${arg.data.name} already exists.`);
+  existDirector(director, arg.data.name);
+
+  return context.orm.directors.update({
+    where: { id: parseInt(arg.id, 10) },
+    data: arg.data,
+  });
 }
 
 export async function deleteDierctor(
@@ -48,12 +44,12 @@ export async function deleteDierctor(
   arg: { id: string },
   context: ResolverContext
 ) {
+  unauthenticated();
   const director = await context.orm.directors.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });
-  if (!director) {
-    throw new Error(`The Director with id ${arg.id} does not exist.`);
-  }
+
+  isDirector(director, arg);
   await context.orm.directors.delete({
     where: { id: parseInt(arg.id, 10) },
   });

@@ -1,15 +1,15 @@
-import { PrismaClient, Roles } from '@prisma/client';
+import { Roles } from '@prisma/client';
 import { errorHandler } from '../../middleware';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { ResolverContext } from '../../utils/typeContext';
+import { unauthenticated } from '../../utils/authorization.error';
+import { isRoles } from './utils/errors.roles';
 
 export async function createRole(
   parent: unknown,
   { data }: { data: Pick<Roles, 'name' | 'status'> },
   context: ResolverContext
 ): Promise<Roles | undefined> {
+  unauthenticated();
   try {
     const role = await context.orm.roles.create({
       data,
@@ -25,13 +25,11 @@ export async function updateRole(
   arg: { id: string; data: { data: Pick<Roles, 'name' | 'status'> } },
   context: ResolverContext
 ): Promise<Roles> {
+  unauthenticated();
   const role = await context.orm.roles.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });
-  if (!role) {
-    throw new Error(`The Role with id ${arg.id}, does not exist.`);
-
-  }
+  isRoles(role, arg);
   return context.orm.roles.update({
     where: { id: parseInt(arg.id, 10) },
     data: arg.data,
@@ -43,13 +41,11 @@ export async function deleteRole(
   arg: { id: string },
   context: ResolverContext
 ) {
+  unauthenticated();
   const role = await context.orm.roles.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });
-  if (!role) {
-    throw new Error(`The Role with id ${arg.id}, does not exist.`);
-
-  }
+  isRoles(role, arg);
   await context.orm.roles.delete({
     where: { id: parseInt(arg.id, 10) },
   });

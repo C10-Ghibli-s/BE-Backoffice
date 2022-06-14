@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon -e ts --exec \"npm run buildrun\" | pino-pretty",
-    "stag": "NODE_ENV=stag nodemon -e ts --exec \"npm run buildrun\" | pino-pretty",
+    "dev": "nodemon -e ts --exec \"npm run buildrun\" | pino-pretty -H",
+    "stag": "NODE_ENV=stag nodemon -e ts --exec \"npm run buildrun\" | pino-pretty -H",
     "prod": "NODE_ENV=prod node ./dist/index.js | pino-pretty",
     "build": "tsc",
     "buildrun": "npm run build && node ./dist/index.js",
