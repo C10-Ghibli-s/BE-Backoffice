@@ -1,9 +1,10 @@
-import { Interactions, Movies, PrismaClient, Users } from '@prisma/client';
+import { Interactions, Movies, Users } from '@prisma/client';
 import { errorHandler } from '../../middleware';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { ResolverContext } from '../../utils/typeContext';
+import { unauthenticated } from '../../utils/authorization.error';
+import { isUsers } from '../Users/utils/errors.users';
+import { isMovies } from '../Movies/utils/errors.movies';
+import { isInteractions } from './utils/errors.interactions';
 
 export async function createAnInteraction(
   parent: unknown,
@@ -17,6 +18,7 @@ export async function createAnInteraction(
   },
   context: ResolverContext
 ): Promise<Interactions | undefined> {
+  unauthenticated();
   try {
     return await context.orm.interactions.create({
       data,
@@ -31,24 +33,19 @@ export async function addMoviesUsers(
   arg: { movieId: string; userId: string; interId: string },
   context: ResolverContext
 ): Promise<Interactions | null> {
+  unauthenticated();
   const user = await context.orm.users.findUnique({
     where: { id: parseInt(arg.userId, 10) }
   });
-  if (!user) {
-    throw new Error(`The User with id ${arg.userId}, does not exist.`);
-  }
+  isUsers(user, arg.userId);
   const movie = await context.orm.movies.findUnique({
     where: { id: parseInt(arg.movieId, 10) }
   });
-  if (!movie) {
-    throw new Error(`The Movie with id ${arg.movieId}, does not exist.`);
-  }
+  isMovies(movie, arg.movieId);
   const interaction = await context.orm.interactions.findUnique({
     where: { id: parseInt(arg.interId, 10) }
   });
-  if (!interaction) {
-    throw new Error(`The Interaction with id ${arg.interId}, does not exist.`);
-  }
+  isInteractions(interaction, arg.interId);
   return context.orm.interactions.update({
     where: { id: parseInt(arg.interId, 10) },
     data: {
@@ -103,12 +100,11 @@ export async function updateInteraction(
   },
   context: ResolverContext
 ): Promise<Interactions> {
+  unauthenticated();
   const interaction = await context.orm.interactions.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });
-  if (!interaction) {
-    throw new Error(`The Interaction with id ${arg.id}, does not exist.`);
-  }
+  isInteractions(interaction, arg.id);
   return await context.orm.interactions.update({
     where: { id: parseInt(arg.id, 10) },
     data: arg.data,
@@ -120,12 +116,11 @@ export async function deleteAnInteraction(
   arg: { id: string },
   context: ResolverContext
 ) {
+  unauthenticated();
   const interaction = await context.orm.interactions.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });
-  if (!interaction) {
-    throw new Error(`The Interaction with id ${arg.id}, does not exist.`);
-  }
+  isInteractions(interaction, arg.id);
   await context.orm.interactions.delete({
     where: {
       id: parseInt(arg.id, 10),

@@ -1,9 +1,8 @@
-import { PrismaClient, Writers } from '@prisma/client';
+import { Writers } from '@prisma/client';
 import { errorHandler } from '../../middleware';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { ResolverContext } from '../../utils/typeContext';
+import { unauthenticated } from '../../utils/authorization.error';
+import { isWriters } from './utils/errors.writers';
 
 export async function showAllWriters(
   parent: unknown,
@@ -11,6 +10,8 @@ export async function showAllWriters(
   context: ResolverContext
 ): Promise<Writers[] | undefined> {
   let writers: Array<Writers>;
+  //* if the Users is logged.
+  unauthenticated();
   try {
     writers = await context.orm.writers.findMany();
     return writers;
@@ -27,8 +28,9 @@ export async function getAWriter(
     where: { id: parseInt(arg.id, 10) },
     include: { movies: true },
   });
-  if (!writers) {
-    throw new Error(`The Writer with id ${arg.id}, does not exist.`);
-  }
+  //* if the Users is logged.
+  unauthenticated();
+  //* Validates if there is a writer.
+  isWriters(writers, arg);
   return writers;
 }

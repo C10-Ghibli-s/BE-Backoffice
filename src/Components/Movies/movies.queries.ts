@@ -1,9 +1,8 @@
-import { Movies, PrismaClient } from '@prisma/client';
+import { Movies } from '@prisma/client';
 import { errorHandler } from '../../middleware';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { unauthenticated } from '../../utils/authorization.error';
+import { ResolverContext } from '../../utils/typeContext';
+import { isMovies } from './utils/errors.movies';
 
 export async function showAllMovies(
   parent: unknown,
@@ -11,6 +10,8 @@ export async function showAllMovies(
   context: ResolverContext
 ): Promise<Movies[] | undefined> {
   let movies: Array<Movies>;
+  //* if the Users is logged.
+  unauthenticated();
   try {
     movies = await context.orm.movies.findMany({
       include: {
@@ -28,6 +29,9 @@ export async function getAMovie(
   arg: { id: string },
   context: ResolverContext
 ): Promise<Movies | null> {
+  //* if the Users is logged.
+  unauthenticated();
+
   const movie = await context.orm.movies.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: {
@@ -38,8 +42,7 @@ export async function getAMovie(
       musicians: true,
     },
   });
-  if (!movie) {
-    throw new Error(`The Movie with id ${arg.id}, does not exist.`);
-  }
+  //* Validates if there is a movie.
+  isMovies(movie, arg.id);
   return movie;
 }

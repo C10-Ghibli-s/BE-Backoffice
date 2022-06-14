@@ -1,15 +1,15 @@
-import { Interactions, PrismaClient } from '@prisma/client';
+import { Interactions } from '@prisma/client';
 import { errorHandler } from '../../middleware';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { ResolverContext } from '../../utils/typeContext';
+import { unauthenticated } from '../../utils/authorization.error';
+import { isInteractions } from './utils/errors.interactions';
 
 export async function showAllInteractions(
   parent: unknown,
   arg: unknown,
   context: ResolverContext
 ): Promise<Interactions[] | undefined> {
+  unauthenticated();
   let interactions: Array<Interactions>;
   try {
     interactions = await context.orm.interactions.findMany();
@@ -24,6 +24,7 @@ export async function getAInteraction(
   arg: { id: string },
   context: ResolverContext
 ): Promise<Interactions | null> {
+  unauthenticated();
   const interaction = await context.orm.interactions.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: {
@@ -31,8 +32,6 @@ export async function getAInteraction(
       movie: true,
     },
   });
-  if (!interaction) {
-    throw new Error(`The Interaction with id ${arg.id}, does not exist.`);
-  }
+  isInteractions(interaction, arg.id);
   return interaction;
 }

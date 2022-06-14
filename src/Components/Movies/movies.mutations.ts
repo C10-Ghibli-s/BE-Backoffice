@@ -2,14 +2,13 @@ import {
   Directors,
   Movies,
   Musicians,
-  PrismaClient,
   Titles,
   Writers,
 } from '@prisma/client';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { ResolverContext } from '../../utils/typeContext';
+import { unauthenticated } from '../../utils/authorization.error';
+import { existTitles } from '../Titles/utils/errors.titles';
+import { isMovies } from './utils/errors.movies';
 
 export async function createAMovie(
   parent: unknown,
@@ -31,6 +30,7 @@ export async function createAMovie(
   },
   context: ResolverContext
 ): Promise<Movies> {
+  unauthenticated();
   const {
     status,
     userName,
@@ -48,11 +48,7 @@ export async function createAMovie(
   const originalTitle = await context.orm.titles.findUnique({
     where: { originalTitle: titles.originalTitle }
   });
-  if (title) {
-    throw new Error(`That Title "${titles.title}"already exists.`);
-  }else if (originalTitle) {
-    throw new Error(`That Original Title "${titles.originalTitle}"already exists.`);
-  }
+  existTitles(title, originalTitle, data.title, data.originalTitle);
   return await context.orm.movies.create({
     data: {
       filmDescription,
@@ -132,12 +128,11 @@ export async  function updateAMovie(
   },
   context: ResolverContext
 ): Promise<Movies> {
+  unauthenticated();
   const movie = await context.orm.movies.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });
-  if (!movie) {
-    throw new Error(`The Movie with id ${arg.id}, does not exist.`);
-  }
+  isMovies(movie, arg.id);
   return context.orm.movies.update({
     where: { id: parseInt(arg.id, 10) },
     data: arg.data,
@@ -149,12 +144,11 @@ export async function deleteMovie(
   arg: { id: string },
   context: ResolverContext
 ) {
+  unauthenticated();
   const movie = await context.orm.movies.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });
-  if (!movie) {
-    throw new Error(`The Movie with id ${arg.id}, does not exist.`);
-  }
+  isMovies(movie, arg.id);
   await context.orm.movies.delete({
     where: { id: parseInt(arg.id, 10) },
   });
@@ -169,7 +163,7 @@ export async function addPeople(
   },
   context: ResolverContext
 ): Promise<Movies | null> {
-
+  unauthenticated();
   for (const id of arg.data.musiciansId) {
     await context.orm.movies.update({
       where: { id: parseInt(arg.movieId, 10) },

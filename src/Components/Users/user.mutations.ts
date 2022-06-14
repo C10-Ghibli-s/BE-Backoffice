@@ -1,9 +1,8 @@
-import { Users, PrismaClient, Roles } from '@prisma/client';
+import { Users, Roles } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-
-type ResolverContext = {
-  orm: PrismaClient;
-};
+import { unauthenticated } from '../../utils/authorization.error';
+import { ResolverContext } from '../../utils/typeContext';
+import { existUser, isUsers } from './utils/errors.users';
 
 export async function createUser(
   parent: unknown,
@@ -49,35 +48,33 @@ export async function updateUser(
   },
   context: ResolverContext
 ): Promise<Users | undefined> {
+  unauthenticated();
   const { nickname, profilePicture, status, roleId } = arg.data;
   let user = await context.orm.users.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });
-  if (!user) {
-    throw new Error(`The User with id ${arg.id} does not exists.`);
-  }else if (nickname) {
+  isUsers(user, arg.id);
+  if (nickname) {
     user = await context.orm.users.findUnique({
       where: { nickname: nickname },
     });
-    if (user === null) {
-      return context.orm.users.update({
-        where: { id: parseInt(arg.id, 10) },
-        data: {
-          nickname: nickname,
-          profilePicture: profilePicture,
-          status: status,
-          role: {
-            connect: {
-              id: roleId,
-            },
+    existUser(user, nickname);
+    return context.orm.users.update({
+      where: { id: parseInt(arg.id, 10) },
+      data: {
+        nickname: nickname,
+        profilePicture: profilePicture,
+        status: status,
+        role: {
+          connect: {
+            id: roleId,
           },
         },
-        include: {
-          role: true
-        }
-      });
-    }
-    throw new Error(`The User with nickname ${nickname} already exists.`);
+      },
+      include: {
+        role: true
+      }
+    });
   }
   return context.orm.users.update({
     where: { id: parseInt(arg.id, 10) },
@@ -102,12 +99,11 @@ export async function deleteAnUser(
   arg: { id: string },
   context: ResolverContext
 ) {
+  unauthenticated();
   const user = await context.orm.users.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });
-  if (!user) {
-    throw new Error(`The User with id ${arg.id}, does not exist.`);
-  }
+  isUsers(user, arg.id);
   await context.orm.users.delete({
     where: { id: parseInt(arg.id, 10) },
   });

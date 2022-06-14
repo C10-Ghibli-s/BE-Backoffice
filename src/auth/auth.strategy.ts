@@ -40,14 +40,20 @@ export const CheckJWT = async (server: Server) => {
       algorithms: ['RS256']
     }
   });
-  server.auth.default('jwt');
+  // server.auth.default('jwt');
 
   server.route([{
     method: 'GET',
-    path: '/verify',
+    path: '/auth/verify',
     options: { auth: 'jwt' },
     handler: (req: Request) => {
+      const objectCredentials: any = req.auth.credentials;
+      role = objectCredentials.payload.permissions[0];
+      role = role.toUpperCase();
+
       return (req.auth.credentials);
     }
   }]);
 };
+
+export let role: string;
