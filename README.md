@@ -57,7 +57,7 @@ Once node.js is installed on your pc, make sure that you have the latest *npm ve
 ```bash
 $ npm intall npm@latest -g
 ```
-The project uses the docker ecosystem in order to run a container of mysql, in order to do that; download [*docker*](https://www.docker.com/get-started/) and [*docker compose*](https://docs.docker.com/compose/install/).
+The project uses the docker ecosystem in order to run a container of mysql, so to do that; download [*docker*](https://www.docker.com/get-started/) and [*docker compose*](https://docs.docker.com/compose/install/).
 
 ## 🥣 Installation
 Amazing! In this part we are talking about how to run the app in your local machine.
@@ -92,7 +92,7 @@ AUTH0_ISSUER_BASE_URL
 AUTH0_AUDIENCE
 
 ```
-5. Defore start to run the app, we have to make up the image container, so in the terminal run:  
+5. Before start to run the app, we have to make up the image container, so in the terminal run:  
 `docker compose up -d --build` 
 
 ![Docker-gif](./src/Public/img/docker.gif)
