@@ -1,7 +1,7 @@
 import { Users } from '@prisma/client';
 import { errorHandler } from '../../middleware';
 import { ResolverContext } from '../../utils/typeContext';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedSuperAdmin } from '../../utils/authorization.error';
 import { isUsers } from './utils/errors.users';
 
 export async function showAllUsers(
@@ -10,6 +10,7 @@ export async function showAllUsers(
   context: ResolverContext
 ): Promise<Users[] | undefined> {
   unauthenticated();
+  unauthorizedSuperAdmin();
   let users: Array<Users>;
   try {
     users = await context.orm.users.findMany();

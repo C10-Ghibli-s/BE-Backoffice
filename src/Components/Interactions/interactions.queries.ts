@@ -1,7 +1,7 @@
 import { Interactions } from '@prisma/client';
 import { errorHandler } from '../../middleware';
 import { ResolverContext } from '../../utils/typeContext';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedUserAdmin } from '../../utils/authorization.error';
 import { isInteractions } from './utils/errors.interactions';
 
 export async function showAllInteractions(
@@ -10,6 +10,7 @@ export async function showAllInteractions(
   context: ResolverContext
 ): Promise<Interactions[] | undefined> {
   unauthenticated();
+  unauthorizedUserAdmin();
   let interactions: Array<Interactions>;
   try {
     interactions = await context.orm.interactions.findMany();
@@ -25,6 +26,7 @@ export async function getAInteraction(
   context: ResolverContext
 ): Promise<Interactions | null> {
   unauthenticated();
+  unauthorizedUserAdmin();
   const interaction = await context.orm.interactions.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: {

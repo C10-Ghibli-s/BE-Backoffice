@@ -1,7 +1,7 @@
 import { Directors } from '@prisma/client';
 import { errorHandler } from '../../middleware/index';
 import { ResolverContext } from '../../utils/typeContext';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedUserAdmin } from '../../utils/authorization.error';
 import { isDirector } from './utils/errors.directors';
 
 export async function showAllDirectors(
@@ -11,6 +11,7 @@ export async function showAllDirectors(
 ): Promise<Directors[] | undefined> {
   let directors: Array<Directors>;
   unauthenticated();
+  unauthorizedUserAdmin();
   try {
     directors = await context.orm.directors.findMany();
     return directors;
@@ -24,6 +25,7 @@ export async function getADirector(
   context: ResolverContext
 ): Promise<Directors | null> {
   unauthenticated();
+  unauthorizedUserAdmin();
   const director = await context.orm.directors.findUnique({
     where: { id: parseInt(arg.id, 10) },
     include: { movies: true },

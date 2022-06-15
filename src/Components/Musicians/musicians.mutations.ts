@@ -1,6 +1,6 @@
 import { Musicians } from '@prisma/client';
 import { ResolverContext } from '../../utils/typeContext';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedAdmin } from '../../utils/authorization.error';
 import { existMusicians, isMusicians } from './utils/errors.musicians';
 
 export async function createMusician(
@@ -9,6 +9,7 @@ export async function createMusician(
   context: ResolverContext
 ): Promise<Musicians | undefined> {
   unauthenticated();
+  unauthorizedAdmin();
   const musician = await context.orm.musicians.findUnique({
     where: { name: data.name },
   });
@@ -25,6 +26,7 @@ export async function updateMusician(
   context: ResolverContext
 ): Promise<Musicians | undefined> {
   unauthenticated();
+  unauthorizedAdmin();
   let musician = await context.orm.musicians.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });
@@ -45,6 +47,7 @@ export async function deleteMusician(
   context: ResolverContext
 ) {
   unauthenticated();
+  unauthorizedAdmin();
   const musician = await context.orm.musicians.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });

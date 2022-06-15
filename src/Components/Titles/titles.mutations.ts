@@ -1,6 +1,6 @@
 import { Movies, Titles } from '@prisma/client';
 import { ResolverContext } from '../../utils/typeContext';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedAdmin } from '../../utils/authorization.error';
 import { existTitles, isTitles } from './utils/errors.titles';
 
 export function createTitle(
@@ -13,6 +13,7 @@ export function createTitle(
   context: ResolverContext
 ): Promise<Titles> {
   unauthenticated();
+  unauthorizedAdmin();
   return context.orm.titles.create({
     data,
   });
@@ -24,6 +25,7 @@ export async function updateTitle(
   context: ResolverContext
 ): Promise<Titles> {
   unauthenticated();
+  unauthorizedAdmin();
   let title = await context.orm.titles.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });
@@ -72,6 +74,7 @@ export async function deleteTitle(
   context: ResolverContext
 ) {
   unauthenticated();
+  unauthorizedAdmin();
   const title = await context.orm.titles.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });

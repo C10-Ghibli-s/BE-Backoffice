@@ -1,7 +1,7 @@
 import { Interactions, Movies, Users } from '@prisma/client';
 import { errorHandler } from '../../middleware';
 import { ResolverContext } from '../../utils/typeContext';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedUserAdmin } from '../../utils/authorization.error';
 import { isUsers } from '../Users/utils/errors.users';
 import { isMovies } from '../Movies/utils/errors.movies';
 import { isInteractions } from './utils/errors.interactions';
@@ -19,6 +19,7 @@ export async function createAnInteraction(
   context: ResolverContext
 ): Promise<Interactions | undefined> {
   unauthenticated();
+  unauthorizedUserAdmin();
   try {
     return await context.orm.interactions.create({
       data,
@@ -34,6 +35,7 @@ export async function addMoviesUsers(
   context: ResolverContext
 ): Promise<Interactions | null> {
   unauthenticated();
+  unauthorizedUserAdmin();
   const user = await context.orm.users.findUnique({
     where: { id: parseInt(arg.userId, 10) }
   });
@@ -101,6 +103,7 @@ export async function updateInteraction(
   context: ResolverContext
 ): Promise<Interactions> {
   unauthenticated();
+  unauthorizedUserAdmin();
   const interaction = await context.orm.interactions.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });
@@ -117,6 +120,7 @@ export async function deleteAnInteraction(
   context: ResolverContext
 ) {
   unauthenticated();
+  unauthorizedUserAdmin();
   const interaction = await context.orm.interactions.findUnique({
     where: { id: parseInt(arg.id, 10) }
   });

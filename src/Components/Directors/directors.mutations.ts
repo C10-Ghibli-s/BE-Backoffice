@@ -1,7 +1,7 @@
 import { Directors } from '@prisma/client';
 import { ResolverContext } from '../../utils/typeContext';
 import { existDirector, isDirector } from './utils/errors.directors';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedAdmin } from '../../utils/authorization.error';
 
 export async function createDirector(
   parent: unknown,
@@ -9,6 +9,7 @@ export async function createDirector(
   context: ResolverContext
 ): Promise<Directors | undefined> {
   unauthenticated();
+  unauthorizedAdmin();
   const director = await context.orm.directors.findUnique({
     where: { name: data.name },
   });
@@ -24,6 +25,7 @@ export async function updateDirector(
   context: ResolverContext
 ): Promise<Directors | undefined> {
   unauthenticated();
+  unauthorizedAdmin();
   let director = await context.orm.directors.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });
@@ -45,6 +47,7 @@ export async function deleteDierctor(
   context: ResolverContext
 ) {
   unauthenticated();
+  unauthorizedAdmin();
   const director = await context.orm.directors.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });

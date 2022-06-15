@@ -1,6 +1,6 @@
 import { Users, Roles } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { unauthenticated } from '../../utils/authorization.error';
+import { unauthenticated, unauthorizedSuper } from '../../utils/authorization.error';
 import { ResolverContext } from '../../utils/typeContext';
 import { existUser, isUsers } from './utils/errors.users';
 
@@ -100,6 +100,7 @@ export async function deleteAnUser(
   context: ResolverContext
 ) {
   unauthenticated();
+  unauthorizedSuper();
   const user = await context.orm.users.findUnique({
     where: { id: parseInt(arg.id, 10) },
   });
