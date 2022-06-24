@@ -59,6 +59,7 @@ model Movies {
   releaseDate       String      @map("release_date")
   userName          String      @map("user_name")
   linkWiki          String      @map("link_wiki")
+  youtube           String
   duration          Int
   createdAt         DateTime    @map("created_at") @default(now())
   updatedAt         DateTime?   @map("updated_at") @updatedAt

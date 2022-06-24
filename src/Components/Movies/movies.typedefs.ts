@@ -33,6 +33,7 @@ export const moviesTypeDefs = gql `
     userName: String
     linkWiki: String
     duration: Int
+    youtube: String
     interactions: [Interactions]
     title: Titles
     directors: [Directors]
@@ -49,6 +50,7 @@ export const moviesTypeDefs = gql `
     linkWiki: String
     duration: Int!
     status: Status
+    youtube: String!
 
     title: String!
     originalTitle: String!
@@ -62,6 +64,7 @@ export const moviesTypeDefs = gql `
     releaseDate: String
     userName: String
     linkWiki: String
+    youtube: String
     duration: Int
     status: Status
   }

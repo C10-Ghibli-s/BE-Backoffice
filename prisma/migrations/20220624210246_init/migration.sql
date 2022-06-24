@@ -45,6 +45,7 @@ CREATE TABLE `movies` (
     `release_date` VARCHAR(191) NOT NULL,
     `user_name` VARCHAR(191) NOT NULL,
     `link_wiki` VARCHAR(191) NOT NULL,
+    `youtube` VARCHAR(191) NOT NULL,
     `duration` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NULL,
