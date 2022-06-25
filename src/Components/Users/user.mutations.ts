@@ -19,25 +19,24 @@ export async function createUser(
   const user = await context.orm.users.findUnique({
     where: { nickname: nickname },
   });
-  if (user === null) {
-    return await context.orm.users.create({
-      data: {
-        nickname,
-        password: hashPassword,
-        profilePicture,
-        status,
-        role: {
-          connect: {
-            id: roleId,
-          },
+  existUser(user, nickname);
+  return await context.orm.users.create({
+    data: {
+      nickname,
+      password: hashPassword,
+      profilePicture,
+      status,
+      role: {
+        connect: {
+          id: roleId,
         },
       },
-      include: {
-        role: true,
-      },
-    });
-  }
-  throw new Error(`The User with nickname ${nickname} already exist`);
+    },
+    include: {
+      role: true,
+    },
+  });
+
 }
 
 export async function updateUser(

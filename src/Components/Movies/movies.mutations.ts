@@ -25,6 +25,7 @@ export async function createAMovie(
       | 'linkWiki'
       | 'releaseDate'
       | 'audienceScore'
+      | 'youtube'
     > &
       Titles;
   },
@@ -41,6 +42,7 @@ export async function createAMovie(
     linkWiki,
     releaseDate,
     audienceScore,
+    youtube,
     ...titles
   } = data;
   const title = await context.orm.titles.findUnique({
@@ -60,6 +62,7 @@ export async function createAMovie(
       linkWiki,
       releaseDate,
       audienceScore,
+      youtube,
       title: {
         create: {
           ...titles,
@@ -73,13 +76,9 @@ export async function createAMovie(
 }
 
 export const resolver: Record<
-  keyof (Movies & { title: Titles } & { directors: Directors } & {
-    musicians: Musicians;
-  } & { writers: Writers }),
+  keyof (Movies & { title: Titles } ),
   (
-    parent: Movies & { title: Titles } & { directors: Directors } & {
-      musicians: Musicians;
-    } & { writers: Writers }
+    parent: Movies & { title: Titles }
   ) => unknown
 > = {
   id: (parent) => parent.id,
@@ -92,21 +91,12 @@ export const resolver: Record<
   movieBanner: (parent) => parent.movieBanner,
   releaseDate: (parent) => parent.releaseDate,
   status: (parent) => parent.status,
+  youtube: (parent) => parent.youtube,
   userName: (parent) => parent.userName,
   title: (parent) => ({
     title: parent.title.title,
     originalTitle: parent.title.originalTitle,
     romajiTitle: parent.title.romajiTitle,
-  }),
-  directors: (parent) => ({
-    id: parent.directors.id,
-    name: parent.directors.name,
-  }),
-  musicians: (parent) => ({
-    name: parent.musicians.name,
-  }),
-  writers: (parent) => ({
-    name: parent.writers.name,
   }),
 };
 
