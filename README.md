@@ -31,7 +31,7 @@ in order to mount image of mysql, hapi js framework of Node js, and GraphQL with
 6. [Our Team](#-our-team)
 
 ## 🫕 Config Environment
-Make sure that you have install node js, docker is a nice tool to container images of applications, we are going to use it to run an image of mysql; or you can run your local databa application.
+Make sure that you have install node js, and docker which is a nice tool to container images of applications, we are going to use it to run an image of mysql; or you can run your local databa application.
 
 > ⚠️ The projec would be run, once you have configure the enviroment variables (**.env**)
 
@@ -48,10 +48,10 @@ The following technologies are some of which that make up the project:
 - Apollo-Server
 
 ## 📦️ Getting Started
-So, let's talk about how to run this app in your computer. Follow step by step these instructions:
+So, let's talk about the tools that you need to run this app in your computer.
 
 ### Prerequisites
-Install on your computer [*node.js*](https://nodejs.org/en/download/).
+Install in your computer [*node.js*](https://nodejs.org/en/download/).
 
 Once node.js is installed on your pc, make sure that you have the latest *npm version*. Run this command:
 ```bash
@@ -60,7 +60,7 @@ $ npm intall npm@latest -g
 The project uses the docker ecosystem in order to run a container of mysql, so to do that; download [*docker*](https://www.docker.com/get-started/) and [*docker compose*](https://docs.docker.com/compose/install/).
 
 ## 🥣 Installation
-Amazing! In this part we are talking about how to run the app in your local machine.
+Amazing! In this part we are talking about the steps to run the app in your local machine.
 1. Clone the repository  
     `git clone https://github.com/NousCode/BE-Backoffice.git`
 
